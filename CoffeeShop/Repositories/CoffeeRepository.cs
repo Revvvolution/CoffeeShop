@@ -63,7 +63,46 @@ namespace CoffeeShop.Repositories
 
         public Coffee Get(int id)
         {
-            return null;
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                                SELECT c.Id, c.Title, c.BeanVarietyId, bv.Id AS 'BV Id', bv.[Name] AS 'Bean Variety Name', bv.Region, bv.[Notes]
+                                        FROM Coffee c
+                                        LEFT OUTER JOIN BeanVariety bv
+                                        ON c.BeanVarietyId = bv.Id
+                                        WHERE c.Id = @id
+                    ";
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    var reader = cmd.ExecuteReader();
+
+                    Coffee coffee = null;
+                    if (reader.Read())
+                    {
+                        coffee = new Coffee()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Title = reader.GetString(reader.GetOrdinal("Title")),
+                            BeanVarietyId = reader.GetInt32(reader.GetOrdinal("BeanVarietyId")),
+                            BeanVariety = new BeanVariety
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("BV Id")),
+                                Name = reader.GetString(reader.GetOrdinal("Bean Variety Name")),
+                                Region = reader.GetString(reader.GetOrdinal("Region")),
+                                Notes = reader.IsDBNull(reader.GetOrdinal("Notes")) ? null :
+                                        reader.GetString(reader.GetOrdinal("Notes")),
+                            }
+                        };
+
+                    }
+                        reader.Close();
+
+                        return coffee;
+                }
+            }
         }
 
         public void Add(Coffee coffee)
