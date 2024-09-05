@@ -147,8 +147,19 @@ namespace CoffeeShop.Repositories
 
         public void Delete(int id)
         {
-            return;
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "DELETE FROM Coffee WHERE Id = @id";
+                    cmd.Parameters.AddWithValue ("@id", id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
+
 
 
     }
