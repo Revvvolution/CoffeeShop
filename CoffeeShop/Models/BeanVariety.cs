@@ -14,6 +14,6 @@ namespace CoffeeShop.Models
         [StringLength(255, MinimumLength = 3)]
         public string Region { get; set; }
 
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
     }
 }
