@@ -1,4 +1,6 @@
 
+using CoffeeShop.Repositories;
+
 namespace CoffeeShop
 {
     public class Program
@@ -11,6 +13,7 @@ namespace CoffeeShop
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddTransient<IBeanVarietyRepository, BeanVarietyRepository>();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
