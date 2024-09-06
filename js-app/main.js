@@ -3,31 +3,33 @@ const beanVarietyUrl = "https://localhost:5001/api/beanvariety/";
 const button = document.querySelector("#run-button");
 const container = document.querySelector("#container");
 
-    const printBeanVarieties = (beanVariety) => {
-        const composedHTML_Content = `
-            <section class="bv_object">Bean Varieties
-                <h3>${beanVariety.Name}</h3>
-                <ul>
-                    <li>Region: ${beanVariety.Region}</li>
-                    <li>Notes: ${beanVariety.Notes}</li>
-                </ul>
-            </section>
-            <br>
-        `;
-
-        container.innerHTML += composedHTML_Content
-    };
 
 
 button.addEventListener("click", () => {
-    const composedHTML_Header = `<h1>Bean Varieties</h1>`;
-    container.innerHTML = composedHTML_Header
+
+    let composedHTML_Content = `<h1>Bean Varieties</h1>`
+
     getAllBeanVarieties()
-        .then(beanVarieties => {
-            console.log(beanVarieties);
-            printBeanVarieties(beanVarieties);
+    .then(beanVarieties => {
+        console.log(beanVarieties);
+
+        const bvObjects = beanVarieties.map((bv) => {
+            return(`
+                <section class="bv_object">
+                    <h3>${bv.name}</h3>
+                    <ul>
+                        <li><strong>Region: </strong> ${bv.region}</li>
+                        <li><strong>Notes: </strong> ${bv.notes === null ? "none" : bv.notes}</li>
+                    </ul>
+                </section>
+                <br>
+            `);
         })
+        composedHTML_Content += bvObjects.join("");
+        container.innerHTML = composedHTML_Content
+    })
 });
+
 
 function getAllBeanVarieties() {
     return fetch(beanVarietyUrl).then(resp => resp.json());
